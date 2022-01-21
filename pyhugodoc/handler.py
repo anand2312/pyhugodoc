@@ -13,7 +13,7 @@ TITLE_LINE_RE = re.compile(r"!!!\s?(\w.*)")
 
 
 def _get_root_config() -> Mapping[str, Union[str, Mapping[str, str]]]:
-    fp = Path("pyhugodocs.yaml")
+    fp = Path("pyhugodoc.yaml")
     logger.debug("Reading configuration file.")
     try:
         raw_config = yaml.load(fp.read_text(), yaml.Loader)
@@ -99,3 +99,10 @@ def _run_pytk_on_file(fp: Path) -> Mapping:
                 logger.error(f"Error while parsing {obj}: {err}")
 
     return tk_output
+
+
+def _transform_reference_files() -> None:
+    """
+    Go through all subdirectories/files defined by the user in _reference, and convert them
+    into a form that Hugo can render. These generated files will be stored in `content/reference`
+    """
