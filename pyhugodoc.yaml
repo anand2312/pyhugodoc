@@ -1,0 +1,3 @@
+site_dir: docs
+reference_dir: content/_api-reference
+docstring_style: google

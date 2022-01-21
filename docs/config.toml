@@ -1,3 +1,68 @@
 baseURL = 'http://example.org/'
 languageCode = 'en-uk'
+defaultContentLanguage = 'en'
+enableRobotsTXT = true
 title = 'pyhugodoc'
+ignoreFiles = [ '_api-reference/*' ]
+theme = 'LoveIt'
+
+[params]
+  version = "0.2.X"
+  description = "Documentation for pyhugodoc"
+  keywords = ["Python", "Documentation", "Hugo"]
+  defaultTheme = "auto"
+  gitRepo = "https://github.com/anand2312/pyhugodoc"
+
+  [params.search]
+    enable = true
+    type = "lunr"
+    contentLength = 4000
+    highlightTag = "em"
+
+  [params.footer]
+    enable = true
+    hugo = false
+    copyright = true
+    author = true
+    since = 2022
+
+  [params.social]
+    GitHub = "https://github.com/anand2312"
+
+  [params.page]
+    [params.page.toc]
+      enable = true
+      auto = true
+      keepStatic = true
+
+    [params.page.code]
+      copy = true
+
+  [params.analytics]
+    enable = false
+
+[markup]
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = true
+    lineNos = true
+    lineNumbersInTable = true
+    noClasses = true
+
+  [markup.goldmark]
+    [markup.goldmark.extensions]
+      definitionList = true
+      linkify = true
+      strikethrough = true
+      table = true
+      footnote = true
+      typographer = true
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[author]
+  name = "Anand Krishna"
+  link = "https://github.com/anand2312"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]

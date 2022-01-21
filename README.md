@@ -29,14 +29,15 @@ files that Hugo can then render.
 2) Create `pyhugodoc.yaml` configuration file
 ```yaml
 site_dir: docs # the Hugo site directory
-reference_dir: content/_references # path relative to site_dir
+reference_dir: content/_api-reference # path relative to site_dir
 docstring_style: google
 ```
+The generated hugo files will be in a folder with the same name as reference_dir, but with the leading underscore stripped.
 
 3) Start writing documentation!
 pyhugodoc will read the docstrings from your source code.
 For example, to document two classes, `my_lib.src.Example` and `my_lib.Exception`,
-- Make a file in the `_reference` folder, say `example.md` with the following
+- Make a file in the `_api-reference` folder, say `example.md` with the following
 ```
 ::: my_lib.src.Example
 
