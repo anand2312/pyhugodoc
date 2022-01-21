@@ -94,7 +94,8 @@ def _run_pytk_on_file(fp: Path) -> Mapping:
             logger.error(err)
 
     if parse_errs := tk_output.get("parsing_errors"):
-        for err in parse_errs:
-            logger.error(err)
+        for obj, errs in parse_errs.items():
+            for err in errs:
+                logger.error(f"Error while parsing {obj}: {err}")
 
     return tk_output
