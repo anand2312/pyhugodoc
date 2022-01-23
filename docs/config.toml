@@ -1,4 +1,4 @@
-baseURL = 'http://example.org/'
+baseURL = 'https://pyhugodoc.anand2312.tech'
 languageCode = 'en-uk'
 defaultContentLanguage = 'en'
 enableRobotsTXT = true
@@ -40,6 +40,14 @@ theme = 'LoveIt'
 
   [params.analytics]
     enable = false
+
+[menu]
+  [[menu.main]]
+    identifier = "API Reference"
+    name = "API Reference"
+    url = "/reference/"
+    title = "API Reference"
+    weight = 1
 
 [markup]
   [markup.highlight]
