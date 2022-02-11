@@ -7,9 +7,11 @@ from typing import cast, Any, List, Mapping, Union
 import yaml
 from pytkdocs.cli import process_config
 
+from pyhugodoc import filegen
+
 
 logger = logging.getLogger(__name__)
-TITLE_LINE_RE = re.compile(r"!!!\s?(\w.*)")
+TITLE_LINE_RE = re.compile(r":::\s?(\w.*)")
 
 
 def _get_root_config() -> Mapping[str, Union[str, Mapping[str, str]]]:
@@ -21,6 +23,9 @@ def _get_root_config() -> Mapping[str, Union[str, Mapping[str, str]]]:
             "site_dir": raw_config["site_dir"],
             "reference_dir": raw_config["reference_dir"],
         }
+
+        if not base["reference_dir"].startswith("_"):
+            raise ValueError("Reference directory name should start with an _")
 
         if handler := raw_config.get("handlers"):
             base["handlers"] = handler
@@ -39,6 +44,11 @@ def _get_objects_from_file(fp: Path) -> List[Mapping[str, Any]]:
     """
     Read a file from the user-defined _references directory, and get the objects
     defined in it.
+
+    Args:
+        fp: The path to the file to be parsed
+    Returns:
+        Parsed object configurations, to be passed to pytkdocs.
     """
     logger.debug(f"Reading objects from file: {fp}")
     objects = []
@@ -49,7 +59,7 @@ def _get_objects_from_file(fp: Path) -> List[Mapping[str, Any]]:
 
 def _parse_obj_config(config: str, orig_file: Path) -> Mapping[str, Any]:
     """Parses a single object's configuration."""
-    # the first line will have three leading !, followed by a space and then the object name
+    # the first line will have three leading :, followed by a space and then the object name
     # the next lines will be configuration for that specific object
     # but an object may not have specific configuration either,
     # in which case we only need the name
@@ -106,3 +116,12 @@ def _transform_reference_files() -> None:
     Go through all subdirectories/files defined by the user in _reference, and convert them
     into a form that Hugo can render. These generated files will be stored in `content/reference`
     """
+    ref_dir = Path(str(USER_CONFIG["site_dir"])) / str(USER_CONFIG["reference_dir"])
+    output_dir = Path(str(USER_CONFIG["site_dir"])) / str(
+        USER_CONFIG["reference_dir"]
+    ).lstrip("_")
+
+    for file in ref_dir.iterdir():
+        tk_objects = _run_pytk_on_file(file)
+        output_file = output_dir / file.name
+        filegen.write_doc_file(output_file, tk_objects["objects"])

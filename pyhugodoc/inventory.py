@@ -15,7 +15,13 @@ class InventoryItem:
     """Inventory item."""
 
     def __init__(
-        self, name: str, domain: str, role: str, uri: str, priority: str = "1", dispname: Optional[str] = None
+        self,
+        name: str,
+        domain: str,
+        role: str,
+        uri: str,
+        priority: str = "1",
+        dispname: Optional[str] = None,
     ):
         """Initialize the object.
         Arguments:
@@ -65,7 +71,12 @@ class InventoryItem:
 class Inventory(dict):
     """Inventory of collected and rendered objects."""
 
-    def __init__(self, items: Optional[List[InventoryItem]] = None, project: str = "project", version: str = "0.0.0"):
+    def __init__(
+        self,
+        items: Optional[List[InventoryItem]] = None,
+        project: str = "project",
+        version: str = "0.0.0",
+    ):
         """Initialize the object.
         Arguments:
             items: A list of items.
@@ -110,7 +121,9 @@ class Inventory(dict):
         return header + zlib.compress(b"\n".join(lines) + b"\n", 9)
 
     @classmethod
-    def parse_sphinx(cls, in_file: BinaryIO, *, domain_filter: Collection[str] = ()) -> "Inventory":
+    def parse_sphinx(
+        cls, in_file: BinaryIO, *, domain_filter: Collection[str] = ()
+    ) -> "Inventory":
         """Parse a Sphinx v2 inventory file and return an `Inventory` from it.
         Arguments:
             in_file: The binary file-like object to read from.
