@@ -17,10 +17,11 @@ def write_doc_file(fp: Path, objects: List[Mapping[str, Any]]) -> None:
     frontmatter = get_frontmatter(title)
     obj_docs = [_tk_obj_to_content(obj) for obj in objects]
 
-    content = f"{frontmatter}\n\n" f"# {title}\n\n"
+    content = f"{frontmatter}\n\n"
     content += "\n\n".join(obj_docs)
 
-    fp.write_text(content)
+    with open(fp, "w") as f:
+        f.write(content)
 
 
 def get_frontmatter(title: str) -> str:
@@ -67,22 +68,23 @@ def _tk_obj_to_content(data: Mapping[str, Any]) -> str:
         if section["type"] == "markdown":
             # main function definition
             body += section["value"]
+            body += "\n"
         elif section["type"] == "parameters":
             # param descriptions
             body += "**Parameters:**\n"
             for param in section["value"]:
                 elem = f"- {param['name']} "
                 annotation = param["annotation"]
-                elem += f" __({annotation})__:" if annotation else ":"
+                elem += f" _({annotation})_:" if annotation else ":"
                 elem += param["description"]
                 elem += "\n"
 
                 body += elem
-            body += "\n\n"
+            body += "\n"
         elif section["type"] == "return":
             body += "**Returns:** "
             return_annt = section["value"]["annotation"]
-            body += f"__({return_annt})__" if return_annt else ""
+            body += f"_({return_annt})_" if return_annt else ""
             body += section["value"]["description"]
         elif section["type"] == "exception":
             body += "**Raises:**\n"
@@ -91,7 +93,7 @@ def _tk_obj_to_content(data: Mapping[str, Any]) -> str:
         else:
             log.warning(f"Unknown docstring section {section['type']}; skipping...")
 
-    body += "\n\n"
+    body += "\n"
     out = f"{head}\n{body}"
 
     # recursively convert all child members, if any

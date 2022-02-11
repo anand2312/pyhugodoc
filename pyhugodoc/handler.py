@@ -24,7 +24,8 @@ def _get_root_config() -> Mapping[str, Union[str, Mapping[str, str]]]:
             "reference_dir": raw_config["reference_dir"],
         }
 
-        if not base["reference_dir"].startswith("_"):
+        ref_dir_name = Path(raw_config["reference_dir"]).stem
+        if not ref_dir_name.startswith("_"):
             raise ValueError("Reference directory name should start with an _")
 
         if handler := raw_config.get("handlers"):
@@ -69,7 +70,7 @@ def _parse_obj_config(config: str, orig_file: Path) -> Mapping[str, Any]:
     lines = config.splitlines()
 
     if title_match := re.match(TITLE_LINE_RE, lines[0]):
-        obj_config["path"] = title_match.group(0)
+        obj_config["path"] = title_match.group(1)
     else:
         logger.critical(
             f"Invalid title line: {lines[0]}\n in file {orig_file}, skipping"
@@ -116,10 +117,10 @@ def _transform_reference_files() -> None:
     Go through all subdirectories/files defined by the user in _reference, and convert them
     into a form that Hugo can render. These generated files will be stored in `content/reference`
     """
-    ref_dir = Path(str(USER_CONFIG["site_dir"])) / str(USER_CONFIG["reference_dir"])
-    output_dir = Path(str(USER_CONFIG["site_dir"])) / str(
-        USER_CONFIG["reference_dir"]
-    ).lstrip("_")
+    config_ref_dir = str(USER_CONFIG["reference_dir"])
+    output_ref_dir = Path("content") / Path(config_ref_dir).stem.lstrip("_")
+    ref_dir = Path(str(USER_CONFIG["site_dir"])) / config_ref_dir
+    output_dir = Path(str(USER_CONFIG["site_dir"])) / output_ref_dir
 
     for file in ref_dir.iterdir():
         tk_objects = _run_pytk_on_file(file)
