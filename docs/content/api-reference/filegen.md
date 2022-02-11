@@ -1,6 +1,6 @@
 {
     "title": "Filegen",
-    "date": "2022-02-11T08:34:57.265980+00:00",
+    "date": "2022-02-11T08:52:44.749044+00:00",
     "draft": false
 }
 
@@ -20,4 +20,5 @@ Get the Hugo frontmatter for a file, in JSON format.
 **Parameters:**
 - title  _(str)_:The title of the file.
 
-**Returns:** _(str)_Hugo compatible frontmatter.
+**Returns:**
+- str: Hugo compatible frontmatter.

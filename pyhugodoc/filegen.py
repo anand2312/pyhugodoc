@@ -59,7 +59,7 @@ def _tk_obj_to_content(data: Mapping[str, Any]) -> str:
 
     # join on the special properties to the side
     if props:
-        head += f"_({', '.join(props)})_"
+        head += f" _({', '.join(props)})_"
 
     body = f"**Signature**: ```{_fn_signature(name, data['signature'])}```"
     body += "\n\n"
@@ -82,9 +82,9 @@ def _tk_obj_to_content(data: Mapping[str, Any]) -> str:
                 body += elem
             body += "\n"
         elif section["type"] == "return":
-            body += "**Returns:** "
+            body += "**Returns:**\n"
             return_annt = section["value"]["annotation"]
-            body += f"_({return_annt})_" if return_annt else ""
+            body += f"- {return_annt}: " if return_annt else ""
             body += section["value"]["description"]
         elif section["type"] == "exception":
             body += "**Raises:**\n"
