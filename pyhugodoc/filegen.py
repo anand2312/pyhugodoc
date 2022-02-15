@@ -3,10 +3,17 @@ import logging
 
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, List, Mapping
+from typing import Any, List, Mapping, NamedTuple
+
+from pyhugodoc.inventory import Inventory, InventoryItem
 
 
 log = logging.getLogger(__name__)
+
+
+class ObjectDoc(NamedTuple):
+    content: str  # the formatted actual documentation content
+    head: str  # the heading tag used for this object; useful for inventory files and linking
 
 
 def write_doc_file(fp: Path, objects: List[Mapping[str, Any]]) -> None:
@@ -15,7 +22,7 @@ def write_doc_file(fp: Path, objects: List[Mapping[str, Any]]) -> None:
     log.info(f"Building documentation for {fp}")
     title = fp.stem
     frontmatter = get_frontmatter(title)
-    obj_docs = [_tk_obj_to_content(obj) for obj in objects]
+    obj_docs = [_tk_obj_to_content(obj).content for obj in objects]
 
     content = f"{frontmatter}\n\n"
     content += "\n\n".join(obj_docs)
@@ -39,12 +46,8 @@ def get_frontmatter(title: str) -> str:
     return json.dumps({"title": title, "date": ts, "draft": False}, indent=4)
 
 
-def _tk_obj_to_content(data: Mapping[str, Any]) -> str:
-    # if the object is a function or a class, give it a level-2 header
-    # and use it's fully qualified path as the header
-    # if it is a method or a property, give it a level-4 header
-    # and use just it's name as the header
-
+def _tk_obj_to_content(data: Mapping[str, Any]) -> ObjectDoc:
+    """Formats a pytkdoc's parsed object into markdown/HTML content"""
     props = data["properties"]
     path = data["path"]
     name = data["name"]
@@ -52,6 +55,10 @@ def _tk_obj_to_content(data: Mapping[str, Any]) -> str:
 
     log.info(f"Converting object {path}")
 
+    # if the object is a function or a class, give it a level-2 header
+    # and use it's fully qualified path as the header
+    # if it is a method or a property, give it a level-4 header
+    # and use just it's name as the header
     if category in ["class", "function"]:
         head = f"## {path}"
     else:
@@ -61,8 +68,12 @@ def _tk_obj_to_content(data: Mapping[str, Any]) -> str:
     if props:
         head += f" _({', '.join(props)})_"
 
-    body = f"**Signature**: ```{_fn_signature(name, data['signature'])}```"
-    body += "\n\n"
+    body = ""
+
+    if category in ["function", "method"]:
+        # functions have signatures; classes don't
+        body += f"**Signature**: ```{_fn_signature(name, data['signature'])}```"
+        body += "\n\n"
 
     for section in data["docstring_sections"]:
         if section["type"] == "markdown":
@@ -100,9 +111,9 @@ def _tk_obj_to_content(data: Mapping[str, Any]) -> str:
     children_converted = [
         _tk_obj_to_content(child_data) for child_data in data["children"].values()
     ]
-    joined = "\n\n".join(children_converted)
+    joined = "\n\n".join([child.content for child in children_converted])
 
-    return out + "\n" + joined
+    return ObjectDoc(content=out + "\n" + joined, head=head)
 
 
 def _fn_signature(fn_name: str, data: Mapping[str, Any]) -> str:

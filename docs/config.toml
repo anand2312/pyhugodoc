@@ -7,7 +7,7 @@ ignoreFiles = [ '_api-reference/*' ]
 theme = 'hugo-theme-learn'
 
 [params]
-  editURL = "https://github.com/anand2312/pyhugodoc/tree/main/docs/content"
+  editURL = "https://github.com/anand2312/pyhugodoc/tree/main/docs/content/"
   author = "Anand Krishna"
   description = "Build beautiful documentation for your Python projects."
   disableLandingPageButton = true
