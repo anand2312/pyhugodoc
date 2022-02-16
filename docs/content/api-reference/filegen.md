@@ -1,10 +1,10 @@
 {
     "title": "Filegen",
-    "date": "2022-02-15T18:16:07.272565+00:00",
+    "date": "2022-02-16T18:45:18.834345+00:00",
     "draft": false
 }
 
-## pyhugodoc.filegen.write_doc_file
+## pyhugodoc.filegen.write\_doc\_file
 **Signature**: ```write_doc_file(fp: Path, objects: List[Mapping[str, Any]]) -> None```
 
 Write an object's documentation in the format that Hugo can understand.
@@ -12,13 +12,15 @@ Write an object's documentation in the format that Hugo can understand.
 
 
 
-## pyhugodoc.filegen.get_frontmatter
+
+## pyhugodoc.filegen.get\_frontmatter
 **Signature**: ```get_frontmatter(title: str) -> str```
 
 Get the Hugo frontmatter for a file, in JSON format.
 
+
 **Parameters:**
-- title  _(str)_:The title of the file.
+- title  _(str)_: The title of the file.
 
 **Returns:**
 - str: Hugo compatible frontmatter.

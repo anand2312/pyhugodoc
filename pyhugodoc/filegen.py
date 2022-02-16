@@ -3,6 +3,7 @@ import logging
 
 from datetime import datetime, timezone
 from pathlib import Path
+from time import strptime
 from typing import Any, List, Mapping, NamedTuple
 
 from pyhugodoc.inventory import Inventory, InventoryItem
@@ -46,6 +47,18 @@ def get_frontmatter(title: str) -> str:
     return json.dumps({"title": title, "date": ts, "draft": False}, indent=4)
 
 
+def escape_underscores(title: str) -> str:
+    """
+    Escapes the underscores from a function name, to be used as a heading in the doc file.
+
+    Args:
+        title: The object title
+    Returns:
+        The escaped title string.
+    """
+    return title.replace("_", r"\_")
+
+
 def _tk_obj_to_content(data: Mapping[str, Any]) -> ObjectDoc:
     """Formats a pytkdoc's parsed object into markdown/HTML content"""
     props = data["properties"]
@@ -60,9 +73,9 @@ def _tk_obj_to_content(data: Mapping[str, Any]) -> ObjectDoc:
     # if it is a method or a property, give it a level-4 header
     # and use just it's name as the header
     if category in ["class", "function"]:
-        head = f"## {path}"
+        head = f"## {escape_underscores(path)}"
     else:
-        head = f"#### {name}"
+        head = f"#### {escape_underscores(name)}"
 
     # join on the special properties to the side
     if props:
@@ -79,14 +92,14 @@ def _tk_obj_to_content(data: Mapping[str, Any]) -> ObjectDoc:
         if section["type"] == "markdown":
             # main function definition
             body += section["value"]
-            body += "\n"
+            body += "\n\n"
         elif section["type"] == "parameters":
             # param descriptions
             body += "**Parameters:**\n"
             for param in section["value"]:
                 elem = f"- {param['name']} "
                 annotation = param["annotation"]
-                elem += f" _({annotation})_:" if annotation else ":"
+                elem += f" _({annotation})_: " if annotation else ": "
                 elem += param["description"]
                 elem += "\n"
 
